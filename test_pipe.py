@@ -24,11 +24,15 @@ python_path = "../IArt-PipesMania/pipe.py"
 def test_outputs(file_name):
   file = open(file_name)
   file_out = open(file_name.replace(".txt", ".out"))
+  timed_out = False
   try:
-    p = check_output(['python3', 'pipe.py'], stdin=file, timeout=timeout)
-    assert file_out.read() == p # Test
+    p = check_output(['python3', python_path], stdin=file, timeout=timeout)
+    assert str(file_out.read()) == p.decode() # Test
   except TimeoutExpired:
-    pytest.fail(f'Timed limit exceeded after {timeout} seconds')
+    timed_out = True
+  # Had to put in a
+  if (timed_out):
+    pytest.fail(f'Timed limit exceeded after {timeout} seconds', pytrace=False)
 
 
   

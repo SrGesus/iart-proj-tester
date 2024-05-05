@@ -15,7 +15,7 @@ timeout = 10
 # Path to tests folder
 tests_path = "./tests/"
 # Path to python script
-python_path = "./pipe.py"
+python_path = "../IArt-PipesMania/pipe.py"
 ```
 
 ## Running
