@@ -21,5 +21,5 @@ python_path = "../IArt-PipesMania/pipe.py"
 ## Running
 Use pytests to run the tests, e.g:
 ```bash
-python -m pytest
+python -m pytest --durations=0
 ```
