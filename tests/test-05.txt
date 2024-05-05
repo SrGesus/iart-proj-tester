@@ -1,0 +1,3 @@
+FC	VC	VC
+VC	BB	LH
+FE	VB	FD
