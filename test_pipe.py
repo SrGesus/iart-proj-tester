@@ -27,7 +27,7 @@ def test_outputs(file_name):
   timed_out = False
   try:
     p = check_output(['python3', python_path], stdin=file, timeout=timeout)
-    assert str(file_out.read()) == p.decode() # Test
+    assert str(file_out.read()).replace('\r\n','\n') == p.decode().replace('\r\n','\n') # Test
   except TimeoutExpired:
     timed_out = True
   # Had to put in a
