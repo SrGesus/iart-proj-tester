@@ -1,5 +1,6 @@
-import random
 import sys
+import random
+import copy
 import visualizer
 
 def print_usage():
@@ -19,6 +20,23 @@ PIECES: dict = {
   (False, True,  False, True):  "VD", (True,  True,  False, False): "VC",
   (True,  True,  False, True):  "BC", (False, True,  True,  False): "LV",
   (False, True,  True,  True):  "BD", (True,  True,  True,  False): "BE",
+}
+
+ALTERNATIVES: dict = {
+  (False, False, False, True): [(False, False, False, True),(False, False, True, False,),(False, True, False, False),(True, False, False, False,),],
+  (False, False, True, False): [(False, False, False, True),(False, False, True, False,),(False, True, False, False),(True, False, False, False,),],
+  (False, True, False, False): [(False, False, False, True),(False, False, True, False,),(False, True, False, False),(True, False, False, False,),],
+  (True, False, False, False): [(False, False, False, True),(False, False, True, False,),(False, True, False, False),(True, False, False, False,),],
+  (True,  False, False, True): [(True,  False, False, True),(False, True, True, False)],
+  (False, True, True, False):  [(True,  False, False, True),(False, True, True, False)],
+  (False, True,  True,  True): [(False, True,  True,  True),(True, False, True,  True),(True, True, False,  True),(True, True, True, False)],
+  (True, False, True,  True):  [(False, True,  True,  True),(True, False, True,  True),(True, True, False,  True),(True, True, True, False)],
+  (True, True, False,  True):  [(False, True,  True,  True),(True, False, True,  True),(True, True, False,  True),(True, True, True, False)],
+  (True, True, True, False):   [(False, True,  True,  True),(True, False, True,  True),(True, True, False,  True),(True, True, True, False)],
+  (True, True, False, False):  [(True, True, False, False),(False, False, True, True),(False, True, False, True), (True, False, True, False)],
+  (False, False, True, True):  [(True, True, False, False),(False, False, True, True),(False, True, False, True), (True, False, True, False)],
+  (False, True, False, True):  [(True, True, False, False),(False, False, True, True),(False, True, False, True), (True, False, True, False)],
+  (True, False, True, False):  [(True, True, False, False),(False, False, True, True),(False, True, False, True), (True, False, True, False)]
 }
 
 class Matrix:
@@ -59,7 +77,9 @@ class Matrix:
       v.add(f)
     return self.n*self.n==len(v)
 
-  def __init__(self, n: int):
+  def __init__(self, n=None):
+    if n == None:
+      return
     self.n = n
     while True:
       self.matrix = [[(False, False, False, False) for i in range(n+2)] for i in range(n+2)]
@@ -79,8 +99,22 @@ class Matrix:
     for line in self.to_strings():
       print(line)
 
-  def visualize(self):
-    visualizer.visualize(self.to_strings())
+  def visualize(self, title):
+    visualizer.visualize(self.to_strings(), title)
+
+  def copy(self):
+    b = Matrix()
+    b.matrix = copy.deepcopy(self.matrix)
+    b.n = self.n
+    return b
+
+  def scramble(self):
+    b = self.copy()
+    for i in range(0,self.n):
+      for j in range(0,self.n):
+        p = ALTERNATIVES[self.matrix[i][j]]
+        b.matrix[i][j] = p[random.randint(0, len(p)-1)]
+    return b
 
 def main():
   if len(sys.argv) > 1:
@@ -89,7 +123,12 @@ def main():
       if (arg < 2):
         raise ValueError
       m = Matrix(arg)
+      scrambled = m.scramble()
+      print("Solution:")
       m.print()
+      print("")
+      print("Board:")
+      scrambled.print()
     except ValueError:
       print_usage()
       return
@@ -99,7 +138,9 @@ def main():
   if len(sys.argv) > 2 and m != None:
     for o in sys.argv[1:]:
       if o == '-v':
-        m.visualize()
+        m.visualize("Solution")
+        scrambled.visualize("Board")
+        visualizer.render()
 
 if __name__ == "__main__":
   main()
